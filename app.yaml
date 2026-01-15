@@ -1,0 +1,10 @@
+---
+kind: wasmer.io/App.v0
+name: talentai-platform
+description: TalentAI Platform - AI-powered talent management and assessment
+package: static-web-server
+cli_args:
+  - --root
+  - dist
+  - --port
+  - "8080"

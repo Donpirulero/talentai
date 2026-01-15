@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TalentOS - Talent AI Platform</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Sans:wght@300..800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <!-- Driver.js for Onboarding Tour -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Unified Theme Config -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4", 
+                        "primary-orange": "#ec5b13",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "card-dark": "#182234",
+                        "surface-dark": "#182234",
+                        "surface-dark-lighter": "#222f49",
+                        "border-dark": "#222f49",
+                        "text-secondary": "#90a4cb",
+                        "text-secondary-light": "#64748b",
+                        "success": "#0bda5e",
+                        "warning": "#f59e0b",
+                        "danger": "#fa6238",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem", 
+                        "lg": "0.5rem", 
+                        "xl": "0.75rem", 
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+
+    <style>
+        /* Global Styles & Overrides */
+        body { margin: 0; padding: 0; overflow-x: hidden; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+        
+        /* Scrollbar aesthetics */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #101622; }
+        ::-webkit-scrollbar-thumb { background: #222f49; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #314368; }
+
+        /* Animations */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px 2px rgba(37, 106, 244, 0.3); }
+            50% { box-shadow: 0 0 20px 5px rgba(37, 106, 244, 0.5); }
+        }
+        .node-active { animation: pulse-glow 3s infinite; }
+        
+        /* Utility for hiding scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Driver.js Custom Theme */
+        .driver-popover.driverjs-theme {
+            background-color: #182234;
+            color: #ffffff;
+            border: 1px solid #222f49;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(34, 47, 73, 0.5);
+        }
+        .driver-popover.driverjs-theme .driver-popover-title {
+            color: #ffffff;
+            font-family: 'Manrope', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .driver-popover.driverjs-theme .driver-popover-description {
+            color: #90a4cb;
+            font-family: 'Noto Sans', sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .driver-popover.driverjs-theme button {
+            background-color: #256af4;
+            color: #ffffff;
+            text-shadow: none;
+            border-radius: 6px;
+            border: none;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .driver-popover.driverjs-theme button:hover {
+            background-color: #1d55c9;
+        }
+        .driver-popover.driverjs-theme .driver-popover-navigation-btns {
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .driver-popover.driverjs-theme .driver-popover-close-btn {
+            color: #90a4cb;
+        }
+        .driver-popover.driverjs-theme .driver-popover-close-btn:hover {
+            color: #ffffff;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

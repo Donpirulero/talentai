@@ -1,0 +1,8 @@
+{
+  "name": "TalentOS",
+  "description": "The Talent AI Platform - A strategic talent management suite featuring competency mapping, reskilling matrices, and predictive retention analytics.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

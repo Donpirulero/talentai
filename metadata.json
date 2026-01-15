@@ -1,0 +1,8 @@
+{
+  "name": "TalentAI Platform",
+  "description": "A B2B SaaS platform for talent restructuring, featuring AI-driven assessments (TalentScout), analytics dashboards (BioStack), and role recommendation engines (TalentBridge).",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
