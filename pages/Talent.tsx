@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import TalentProfileDetail from './TalentProfileDetail';
 import {
     Search, Mail, MoreHorizontal, TrendingUp, Activity,
-    Download, BrainCircuit, User, CloudUpload
+    Download, BrainCircuit, User, CloudUpload, LayoutGrid, List
 } from 'lucide-react';
 import {
     Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer
@@ -22,6 +22,7 @@ const Talent = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeEmployeeId, setActiveEmployeeId] = useState<string | null>(null);
     const [filterCategory, setFilterCategory] = useState<'ALL' | 'TOP' | 'RISK'>('ALL');
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
     // Load Data
     React.useEffect(() => {
@@ -80,7 +81,24 @@ const Talent = () => {
                             Nómina de Talento
                         </h2>
 
-                        <div className="flex gap-2">
+                        <div className="flex gap-4 items-center">
+                            <div className="flex bg-white/5 p-1 rounded-xl border border-white/10">
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-primary text-white shadow-glow' : 'text-slate-500 hover:text-slate-300'}`}
+                                    title="Vista de Cuadrícula"
+                                >
+                                    <LayoutGrid size={18} />
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('list')}
+                                    className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-primary text-white shadow-glow' : 'text-slate-500 hover:text-slate-300'}`}
+                                    title="Vista de Lista"
+                                >
+                                    <List size={18} />
+                                </button>
+                            </div>
+
                             <div className="relative group w-80">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <Search className="text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
@@ -129,38 +147,93 @@ const Talent = () => {
                     </div>
                 </div>
 
-                {/* List Container - Simplified Grid */}
-                <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 custom-scrollbar content-start">
+                {/* List Container - Support for Grid and List View */}
+                <div className={`flex-1 overflow-y-auto p-6 custom-scrollbar content-start ${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' : 'flex flex-col gap-3'}`}>
                     {filteredEmployees.map(emp => (
-                        <div
-                            key={emp.id}
-                            onDoubleClick={() => setActiveEmployeeId(emp.id)}
-                            className="bg-surface-dark border border-white/5 rounded-2xl p-6 cursor-pointer hover:bg-white/5 hover:border-primary/30 transition-all hover:scale-[1.02] hover:shadow-2xl group flex flex-col items-center text-center relative overflow-hidden"
-                        >
-                            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        viewMode === 'grid' ? (
+                            <div
+                                key={emp.id}
+                                onDoubleClick={() => setActiveEmployeeId(emp.id)}
+                                className="bg-surface-dark border border-white/5 rounded-2xl p-6 cursor-pointer hover:bg-white/5 hover:border-primary/30 transition-all hover:scale-[1.02] hover:shadow-2xl group flex flex-col items-center text-center relative overflow-hidden"
+                            >
+                                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
-                            <div className="relative mb-4">
-                                <div
-                                    className="size-20 rounded-full bg-cover bg-center border-4 border-[#1a1f2e] group-hover:border-primary transition-colors shadow-lg"
-                                    style={{ backgroundImage: `url('${emp.avatar}')` }}
-                                ></div>
-                                <div className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#101622] ${emp.potentialScore > 80 ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
-                            </div>
-
-                            <h3 className="font-bold text-lg text-white mb-1 group-hover:text-primary transition-colors">{emp.name}</h3>
-                            <p className="text-sm text-slate-400 font-medium mb-4">{emp.currentRole}</p>
-
-                            <div className="w-full border-t border-white/5 pt-4 mt-auto grid grid-cols-2 gap-4">
-                                <div>
-                                    <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1">Potential</p>
-                                    <span className={`text-sm font-black ${emp.potentialScore > 80 ? 'text-green-400' : 'text-slate-300'}`}>{emp.potentialScore}%</span>
+                                <div className="relative mb-4">
+                                    <div
+                                        className="size-20 rounded-full bg-cover bg-center border-4 border-[#1a1f2e] group-hover:border-primary transition-colors shadow-lg"
+                                        style={{ backgroundImage: `url('${emp.avatar}')` }}
+                                    ></div>
+                                    <div className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#101622] ${emp.potentialScore > 80 ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
                                 </div>
-                                <div>
-                                    <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1">Riesgo</p>
-                                    <span className={`text-sm font-black ${emp.riskOfExit === 'HIGH' ? 'text-red-500' : 'text-slate-300'}`}>{emp.riskOfExit || 'LOW'}</span>
+
+                                <h3 className="font-bold text-lg text-white mb-1 group-hover:text-primary transition-colors">{emp.name}</h3>
+                                <p className="text-sm text-slate-400 font-medium mb-4">{emp.currentRole}</p>
+
+                                <div className="w-full border-t border-white/5 pt-4 mt-auto grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1">Potential</p>
+                                        <span className={`text-sm font-black ${emp.potentialScore > 80 ? 'text-green-400' : 'text-slate-300'}`}>{emp.potentialScore}%</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1">Riesgo</p>
+                                        <span className={`text-sm font-black ${emp.riskOfExit === 'HIGH' ? 'text-red-500' : 'text-slate-300'}`}>{emp.riskOfExit || 'LOW'}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        ) : (
+                            <div
+                                key={emp.id}
+                                onDoubleClick={() => setActiveEmployeeId(emp.id)}
+                                className="bg-surface-dark border border-white/5 rounded-xl p-4 cursor-pointer hover:bg-white/5 hover:border-primary/30 transition-all group flex items-center gap-6 relative overflow-hidden"
+                            >
+                                <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                                <div className="relative shrink-0">
+                                    <div
+                                        className="size-12 rounded-full bg-cover bg-center border-2 border-[#1a1f2e] group-hover:border-primary transition-colors shadow-md"
+                                        style={{ backgroundImage: `url('${emp.avatar}')` }}
+                                    ></div>
+                                    <div className={`absolute -bottom-1 -right-1 size-3 rounded-full border border-[#101622] ${emp.potentialScore > 80 ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
+                                </div>
+
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-bold text-base text-white truncate group-hover:text-primary transition-colors">{emp.name}</h3>
+                                    <p className="text-xs text-slate-400 font-medium truncate">{emp.currentRole}</p>
+                                </div>
+
+                                <div className="hidden md:flex flex-col items-center w-24">
+                                    <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-1">Potential</p>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-primary"
+                                                style={{ width: `${emp.potentialScore}%` }}
+                                            ></div>
+                                        </div>
+                                        <span className="text-xs font-black text-slate-300">{emp.potentialScore}%</span>
+                                    </div>
+                                </div>
+
+                                <div className="hidden md:flex flex-col items-center w-24">
+                                    <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-1">Performance</p>
+                                    <span className="text-xs font-black text-slate-300">{emp.performanceScore}%</span>
+                                </div>
+
+                                <div className="hidden lg:flex flex-col items-center w-28">
+                                    <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-1">Riesgo</p>
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${emp.riskOfExit === 'HIGH' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'text-slate-400'}`}>
+                                        {emp.riskOfExit || 'LOW'}
+                                    </span>
+                                </div>
+
+                                <button className="p-2 text-slate-500 hover:text-white transition-colors">
+                                    <Mail size={16} />
+                                </button>
+                                <button className="p-2 text-slate-500 hover:text-white transition-colors">
+                                    <MoreHorizontal size={16} />
+                                </button>
+                            </div>
+                        )
                     ))}
                 </div>
             </div>
