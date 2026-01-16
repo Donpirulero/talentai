@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import {
     BrainCircuit, Target, Zap, Activity, Database,
@@ -36,82 +37,56 @@ export const ProfileIngestion: React.FC = () => {
 
     return (
         <div className="flex h-screen w-full bg-background-dark text-white font-display">
-            {/* Sidebar for Admin Context */}
-            <div className="flex h-full w-[260px] flex-col justify-between border-r border-border-dark bg-surface-dark hidden md:flex z-20 shrink-0">
-                <div className="flex flex-col gap-6 p-4">
-                    <div className="flex items-center gap-3 px-2 mb-4">
-                        <div className="size-8 rounded-lg bg-cyan-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-                            <span className="material-symbols-outlined text-white text-[20px]">analytics</span>
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="font-display font-bold text-white text-[14px] tracking-tight">
-                                Talent<span className="text-cyan-400">AI</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <nav className="flex flex-col gap-2">
-                        <div className="px-3 py-2 text-xs font-bold text-text-secondary uppercase tracking-wider">{t("admin.core")}</div>
-
-                        <button
-                            onClick={() => setActiveTab('profiles')}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors text-left ${activeTab === 'profiles' ? 'bg-primary/10 text-primary' : 'text-text-secondary hover:text-white'}`}
-                        >
-                            <span className="material-symbols-outlined text-[20px]">upload_file</span>
-                            <span className="text-sm">{t("admin.link.import")}</span>
-                        </button>
-
-                        <button
-                            onClick={() => setActiveTab('competencies')}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors text-left ${activeTab === 'competencies' ? 'bg-primary/10 text-primary' : 'text-text-secondary hover:text-white'}`}
-                        >
-                            <span className="material-symbols-outlined text-[20px]">list_alt</span>
-                            <div className="flex flex-col text-left">
-                                <span className="text-sm">Competencias</span>
-                                <span className="text-[10px] opacity-70">BioStack Catalog</span>
-                            </div>
-                        </button>
-
-                        <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:text-white transition-colors" href="#">
-                            <span className="material-symbols-outlined text-[20px]">engineering</span>
-                            <span className="text-sm">{t("admin.link.roles")}</span>
-                        </a>
-                    </nav>
-                </div>
-                <div className="p-4 border-t border-border-dark">
-                    <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-500">
-                            <span className="material-symbols-outlined text-sm">chat</span>
-                        </div>
-                        <div>
-                            <p className="text-sm font-bold text-white">{t("admin.bot.title")}</p>
-                            <p className="text-xs text-text-secondary">{t("admin.bot.status")}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {/* Sidebar removed to move to a more minimalist tab-based layout */}
 
             <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-dark relative">
-                {/* Dynamic Header */}
+                {/* Dynamic Header with Tabs */}
                 <header className="flex-none px-8 py-6 border-b border-border-dark bg-background-dark z-10">
-                    {activeTab === 'profiles' ? (
-                        <div className="max-w-5xl mx-auto w-full flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                    <div className="max-w-6xl mx-auto w-full">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                             <div className="flex flex-col gap-1">
-                                <h1 className="text-white text-3xl font-black leading-tight tracking-tight">{t("ingest.header.title")}</h1>
-                                <p className="text-text-secondary text-base font-normal">Step {step} of 3: {step === 1 ? t("ingest.step.1") : step === 2 ? t("ingest.step.2") : t("ingest.step.3")}</p>
+                                <h1 className="text-white text-3xl font-black leading-tight tracking-tight">
+                                    {activeTab === 'profiles' ? t("ingest.header.title") : activeTab === 'competencies' ? 'Gestión de Competencias' : 'Gestión de Roles'}
+                                </h1>
+                                <p className="text-text-secondary text-sm">
+                                    {activeTab === 'profiles' ? `Paso ${step} de 3: ${step === 1 ? t("ingest.step.1") : step === 2 ? t("ingest.step.2") : t("ingest.step.3")}` :
+                                        activeTab === 'competencies' ? 'Catálogo Dinámico BioStack' : 'Explora nuevos perfiles y roles emergentes para la organización'}
+                                </p>
                             </div>
+
+                            <div className="flex bg-white/5 p-1 rounded-xl border border-white/10">
+                                <button
+                                    onClick={() => setActiveTab('profiles')}
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'profiles' ? 'bg-primary text-white shadow-glow' : 'text-slate-500 hover:text-slate-300'}`}
+                                >
+                                    <span className="material-symbols-outlined text-[18px]">upload_file</span>
+                                    Importar
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('competencies')}
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'competencies' ? 'bg-primary text-white shadow-glow' : 'text-slate-500 hover:text-slate-300'}`}
+                                >
+                                    <span className="material-symbols-outlined text-[18px]">list_alt</span>
+                                    Competencias
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('roles')}
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'roles' ? 'bg-primary text-white shadow-glow' : 'text-slate-500 hover:text-slate-300'}`}
+                                >
+                                    <span className="material-symbols-outlined text-[18px]">engineering</span>
+                                    Roles
+                                </button>
+                            </div>
+                        </div>
+
+                        {activeTab === 'profiles' && (
                             <div className="flex items-center gap-2">
-                                <span className={`h-2 w-8 rounded-full ${step >= 1 ? 'bg-primary' : 'bg-border-dark'}`}></span>
-                                <span className={`h-2 w-8 rounded-full ${step >= 2 ? 'bg-primary' : 'bg-border-dark'}`}></span>
-                                <span className={`h-2 w-8 rounded-full ${step >= 3 ? 'bg-primary' : 'bg-border-dark'}`}></span>
+                                <span className={`h-1 flex-1 rounded-full ${step >= 1 ? 'bg-primary shadow-[0_0_10px_rgba(37,106,244,0.5)]' : 'bg-white/5'}`}></span>
+                                <span className={`h-1 flex-1 rounded-full ${step >= 2 ? 'bg-primary shadow-[0_0_10px_rgba(37,106,244,0.5)]' : 'bg-white/5'}`}></span>
+                                <span className={`h-1 flex-1 rounded-full ${step >= 3 ? 'bg-primary shadow-[0_0_10px_rgba(37,106,244,0.5)]' : 'bg-white/5'}`}></span>
                             </div>
-                        </div>
-                    ) : (
-                        <div className="max-w-6xl mx-auto w-full">
-                            <h1 className="text-white text-3xl font-black leading-tight tracking-tight mb-2">Gestión de Competencias</h1>
-                            <p className="text-text-secondary">Sube documentos para actualizar el catálogo o visualiza las competencias activas.</p>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </header>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
@@ -298,9 +273,33 @@ export const ProfileIngestion: React.FC = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-slate-500">
-                            <span className="material-symbols-outlined text-4xl mb-4">engineering</span>
-                            <p>Gestión de Roles (Próximamente)</p>
+                        <div className="max-w-6xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {[
+                                    { title: 'AI Ethicist', desc: 'Asegura que los sistemas de IA se desarrollen de manera responsable y ética.', icon: 'policy', color: 'text-amber-400' },
+                                    { title: 'Prompt Engineer', desc: 'Optimiza la interacción con grandes modelos de lenguaje (LLMs) para máxima eficiencia.', icon: 'psychology', color: 'text-emerald-400' },
+                                    { title: 'Data Storyteller', desc: 'Traduce insights complejos de datos en narrativas estratégicas para el negocio.', icon: 'auto_graph', color: 'text-primary' },
+                                    { title: 'Sustainability Analyst', desc: 'Mide y optimiza el impacto ambiental y social de las operaciones corporativas.', icon: 'eco', color: 'text-blue-400' }
+                                ].map((role, i) => (
+                                    <div key={i} className="bg-surface-dark border border-white/5 rounded-2xl p-6 hover:border-primary/30 transition-all group relative overflow-hidden">
+                                        <div className="flex items-start gap-4">
+                                            <div className={`size-12 rounded-xl bg-white/5 flex items-center justify-center shrink-0 ${role.color}`}>
+                                                <span className="material-symbols-outlined">{role.icon}</span>
+                                            </div>
+                                            <div>
+                                                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-primary transition-colors">{role.title}</h3>
+                                                <p className="text-sm text-slate-400 leading-relaxed">{role.desc}</p>
+                                            </div>
+                                        </div>
+                                        <div className="mt-6 flex justify-end">
+                                            <Link to="/scout/interview" className="text-xs font-black uppercase tracking-widest text-primary hover:text-white transition-colors flex items-center gap-2">
+                                                Definir Perfil
+                                                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>

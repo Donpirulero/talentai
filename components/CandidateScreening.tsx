@@ -25,8 +25,13 @@ export const CandidateScreening: React.FC = () => {
     const [isRecording, setIsRecording] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [analysisComplete, setAnalysisComplete] = useState(false);
-    const [activeTab, setActiveTab] = useState<'transcription' | 'analysis' | 'campaign'>('analysis');
+    const [activeTab, setActiveTab] = useState<'setup' | 'transcription' | 'analysis' | 'campaign'>('setup');
     const [thinkingProcess, setThinkingProcess] = useState<string[]>([]);
+    const [interviewObjective, setInterviewObjective] = useState('');
+    const [agentConfig, setAgentConfig] = useState({
+        name: 'Magui',
+        profile: 'corporate'
+    });
     const [transcriptionData, setTranscriptionData] = useState<TranscriptSegment[]>([]);
     const [toneAnalysis, setToneAnalysis] = useState<ToneAnalysisData | null>(null);
     const { t } = useLanguage();
@@ -170,6 +175,15 @@ export const CandidateScreening: React.FC = () => {
             {/* Top Internal Navigation Tabs */}
             <div className="flex border-b border-white/5 bg-black/20 mb-4 rounded-t-3xl overflow-hidden shrink-0">
                 <button
+                    onClick={() => setActiveTab('setup')}
+                    className={`flex-1 py-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all ${activeTab === 'setup' ? 'border-primary text-white bg-white/5' : 'border-transparent text-slate-500 hover:text-white hover:bg-white/5'}`}
+                >
+                    <span className="flex items-center justify-center gap-2">
+                        <span className="material-symbols-outlined text-[18px]">settings_suggest</span>
+                        Configuración
+                    </span>
+                </button>
+                <button
                     onClick={() => setActiveTab('analysis')}
                     className={`flex-1 py-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all ${activeTab === 'analysis' ? 'border-primary text-white bg-white/5' : 'border-transparent text-slate-500 hover:text-white hover:bg-white/5'}`}
                 >
@@ -187,7 +201,7 @@ export const CandidateScreening: React.FC = () => {
                 >
                     <span className="flex items-center justify-center gap-2">
                         Campaign
-                        <span className="bg-accent-orange text-[9px] px-1.5 py-0.5 rounded text-black font-bold">NEW</span>
+                        <span className="bg-accent-orange text-[9px] px-1.5 py-0.5 rounded text-black font-bold">CORE</span>
                     </span>
                 </button>
             </div>
@@ -197,6 +211,93 @@ export const CandidateScreening: React.FC = () => {
 
                 {activeTab === 'campaign' ? (
                     <CampaignDashboard />
+                ) : activeTab === 'setup' ? (
+                    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8 h-full p-1 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        {/* Agent Config Column */}
+                        <div className="glass-panel p-8 rounded-[2.5rem] border-white/5 bg-black/40 flex flex-col gap-8">
+                            <div className="flex items-center gap-4 mb-2">
+                                <div className="size-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shadow-glow">
+                                    <span className="material-symbols-outlined text-[28px]">smart_toy</span>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-black text-white tracking-tight">Modelo de Agente</h3>
+                                    <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Configuración de IA Reclutadora</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em]">Nombre del Agente</label>
+                                    <input
+                                        type="text"
+                                        value={agentConfig.name}
+                                        onChange={(e) => setAgentConfig({ ...agentConfig, name: e.target.value })}
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-primary/50 transition-all placeholder:text-slate-700"
+                                        placeholder="Nombre de la IA..."
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em]">Perfil de Personalidad</label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {[
+                                            { id: 'corporate', label: 'Corporativo', icon: 'business_center' },
+                                            { id: 'innovation', label: 'Innovación', icon: 'lightbulb' },
+                                            { id: 'technical', label: 'Técnico', icon: 'terminal' },
+                                            { id: 'soft', label: 'Empático', icon: 'volunteer_activism' }
+                                        ].map((p) => (
+                                            <button
+                                                key={p.id}
+                                                onClick={() => setAgentConfig({ ...agentConfig, profile: p.id })}
+                                                className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${agentConfig.profile === p.id ? 'bg-primary/20 border-primary text-white' : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10'}`}
+                                            >
+                                                <span className="material-symbols-outlined text-[20px]">{p.icon}</span>
+                                                <span className="text-xs font-bold">{p.label}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 mt-4">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <span className="material-symbols-outlined text-primary text-sm">info</span>
+                                        <h4 className="text-[10px] font-black text-primary uppercase tracking-widest">Capacidades del Agente</h4>
+                                    </div>
+                                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                                        Este agente utilizará <strong>Gemini 1.5 Pro</strong> para analizar biometría, tono de voz y coherencia argumental durante la entrevista.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Interview Objective Column */}
+                        <div className="glass-panel p-8 rounded-[2.5rem] border-white/5 bg-black/40 flex flex-col gap-6">
+                            <div className="flex items-center gap-4 mb-2">
+                                <div className="size-12 rounded-2xl bg-accent-orange/20 flex items-center justify-center text-accent-orange shadow-[0_0_20px_rgba(255,152,0,0.2)]">
+                                    <span className="material-symbols-outlined text-[28px]">target</span>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-black text-white tracking-tight">Objetivo de la Entrevista</h3>
+                                    <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Definición de Meta y Enfoque</p>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 flex flex-col gap-4">
+                                <label className="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em]">Planteamiento del Objetivo</label>
+                                <textarea
+                                    value={interviewObjective}
+                                    onChange={(e) => setInterviewObjective(e.target.value)}
+                                    className="flex-1 w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-white text-sm leading-relaxed focus:outline-none focus:border-accent-orange/50 transition-all resize-none placeholder:text-slate-700 custom-scrollbar"
+                                    placeholder="Describe qué esperas obtener de esta entrevista, qué competencias críticas buscas validar y cuál es el contexto del rol..."
+                                />
+                            </div>
+
+                            <button className="w-full py-4 bg-accent-orange text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-accent-orange/80 transition-all shadow-xl shadow-accent-orange/20 flex items-center justify-center gap-3">
+                                <span className="material-symbols-outlined">check_circle</span>
+                                Fijar Estrategia
+                            </button>
+                        </div>
+                    </div>
                 ) : (
                     <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 h-full overflow-y-auto lg:overflow-hidden p-1">
 

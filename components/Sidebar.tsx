@@ -21,7 +21,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
     { type: 'header', label: "TALENT SCOUT", id: 'h_scout' },
     { path: "/scout/interview", icon: "video_chat", label: "Entrevistas IA", id: "interview" },
-    { path: "/scout/settings", icon: "settings_suggest", label: "Configuración de Rondas", id: "scout_settings" },
 
     { type: 'header', label: "BIOSTACK ANALYTICS", id: 'h_biostack' },
     { path: "/biostack/dashboard", icon: "analytics", label: "Dashboard de Equipo", id: "bio_dash" },
