@@ -5,6 +5,8 @@ interface ImportMetaEnv {
     readonly VITE_SUPABASE_ANON_KEY: string
     readonly VITE_GOOGLE_API_KEY?: string
     readonly VITE_HUGGINGFACE_TOKEN?: string
+    readonly VITE_DEEPTUTOR_URL?: string
+    readonly VITE_DEEPTUTOR_API_URL?: string
 }
 
 interface ImportMeta {

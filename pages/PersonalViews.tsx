@@ -485,8 +485,9 @@ export const LearningPath: React.FC = () => {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-            // Check Backend API directly (Port 8001) instead of Frontend Proxy (3782) which might hang
-            await fetch('http://localhost:8001/api/v1/knowledge/health', { mode: 'no-cors', signal: controller.signal });
+            // Check Backend API using env var or default to localhost
+            const apiUrl = import.meta.env.VITE_DEEPTUTOR_API_URL || 'http://localhost:8001/api/v1';
+            await fetch(`${apiUrl}/knowledge/health`, { mode: 'no-cors', signal: controller.signal });
             clearTimeout(timeoutId);
             setTutorReady(true);
             setServiceDown(false);
@@ -575,7 +576,7 @@ export const LearningPath: React.FC = () => {
                         </div>
                     ) : (
                         <iframe
-                            src="http://localhost:3782/guide"
+                            src={`${import.meta.env.VITE_DEEPTUTOR_URL || 'http://localhost:3782'}/guide`}
                             className="w-full h-full border-none opacity-90 hover:opacity-100 transition-opacity"
                             title="DeepTutor Interface"
                         />
