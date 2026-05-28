@@ -39,13 +39,14 @@ const TalentProfileDetail: React.FC<TalentProfileDetailProps> = ({ employeeId, o
     // Competency Data for Chart
     const radarData = useMemo(() => {
         if (!employee) return [];
+        // Map actual skills or mock them with theta/kappa logic
         return [
-            { subject: 'Liderazgo', A: employee.potentialScore, fullMark: 100 },
-            { subject: 'Estrategia', A: employee.performanceScore, fullMark: 100 },
-            { subject: 'Técnica', A: 85, fullMark: 100 },
-            { subject: 'Gestión', A: employee.performanceScore, fullMark: 100 },
-            { subject: 'Innovación', A: employee.potentialScore * 0.9, fullMark: 100 },
-            { subject: 'Comunicación', A: 90, fullMark: 100 },
+            { subject: 'Liderazgo', theta: 70, kappa: 85, fullMark: 100 },
+            { subject: 'Estrategia', theta: 65, kappa: 90, fullMark: 100 },
+            { subject: 'Técnica', theta: 85, kappa: 95, fullMark: 100 },
+            { subject: 'Gestión', theta: 60, kappa: 75, fullMark: 100 },
+            { subject: 'Innovación', theta: 75, kappa: 92, fullMark: 100 },
+            { subject: 'Comunicación', theta: 80, kappa: 88, fullMark: 100 },
         ];
     }, [employee]);
 
@@ -122,8 +123,16 @@ const TalentProfileDetail: React.FC<TalentProfileDetailProps> = ({ employeeId, o
                                     <PolarGrid stroke="#334155" />
                                     <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 'bold' }} />
                                     <Radar
-                                        name="Competencies"
-                                        dataKey="A"
+                                        name="Individual (θ)"
+                                        dataKey="theta"
+                                        stroke="#94a3b8"
+                                        fill="#94a3b8"
+                                        fillOpacity={0.1}
+                                        strokeDasharray="4 4"
+                                    />
+                                    <Radar
+                                        name="Sinergia (κ)"
+                                        dataKey="kappa"
                                         stroke="#256af4"
                                         fill="#256af4"
                                         fillOpacity={0.4}
@@ -178,9 +187,15 @@ const TalentProfileDetail: React.FC<TalentProfileDetailProps> = ({ employeeId, o
                             <div className="flex items-center justify-between mb-8 border-b border-glass-border pb-4">
                                 <div className="flex items-center gap-3">
                                     <BrainCircuit size={20} className="text-primary" />
-                                    <h3 className="text-white font-black text-sm uppercase tracking-widest">BioStack Competencies</h3>
+                                    <h3 className="text-white font-black text-sm uppercase tracking-widest">BioStack: Hibridación Centauro</h3>
                                 </div>
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Industria 5.0 Diagnostic</span>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Theory of Mind</span>
+                                        <span className="text-xs font-black text-primary">0.88 AQ</span>
+                                    </div>
+                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Industria 5.0 Diagnostic</span>
+                                </div>
                             </div>
 
                             <div className="space-y-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">

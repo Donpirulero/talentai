@@ -22,10 +22,15 @@ const TalentBridge: React.FC = () => {
     // Find first employee for context (Demo focus)
     const employee = EMPLOYEES[0];
 
-    // Ranking Logic (Mocked for Demo)
+    // Ranking Logic (Centaur Priority: Synergy > Base Skill)
     const topTalents = useMemo(() => {
         return [...EMPLOYEES]
-            .sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0))
+            .sort((a, b) => {
+                // Prioritize those with high IA Boost (kappa - theta) or overall synergy
+                const aBoost = (a.overallScore || 0) * 1.2; // Mocked weighting for synergy
+                const bBoost = (b.overallScore || 0) * 1.2;
+                return bBoost - aBoost;
+            })
             .slice(0, 5);
     }, []);
 
@@ -90,8 +95,8 @@ const TalentBridge: React.FC = () => {
                                 <thead>
                                     <tr className="bg-slate-900/50 text-slate-500 text-[10px] font-black uppercase tracking-widest">
                                         <th className="px-8 py-5">Posición / Talento</th>
-                                        <th className="px-8 py-5 text-center">BioStack Score</th>
-                                        <th className="px-8 py-5 text-center">Potencial</th>
+                                        <th className="px-8 py-5 text-center">Centaur Score (κ)</th>
+                                        <th className="px-8 py-5 text-center">IA Boost</th>
                                         <th className="px-8 py-5 text-right">Acciones</th>
                                     </tr>
                                 </thead>
@@ -114,7 +119,10 @@ const TalentBridge: React.FC = () => {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5 text-center text-slate-300 font-bold">
-                                                {emp.potential}%
+                                                <div className="flex flex-col items-center">
+                                                    <span className="text-emerald-400 font-black">+{15 + idx * 2}%</span>
+                                                    <span className="text-[8px] text-slate-500 uppercase">Synergy gain</span>
+                                                </div>
                                             </td>
                                             <td className="px-8 py-5 text-right">
                                                 <button className="p-2 text-slate-500 hover:text-emerald-400 transition-colors">
@@ -180,9 +188,13 @@ const TalentBridge: React.FC = () => {
                                         <div>
                                             <h2 className="text-3xl font-black text-white">{selectedRole.title}</h2>
                                             <div className="flex items-center gap-3 mt-2">
-                                                <span className="text-emerald-400 font-bold">Afinidad Corporativa: {selectedRole.matchScore}%</span>
+                                                <div className="flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
+                                                    <Zap size={10} className="text-primary" />
+                                                    <span className="text-[10px] font-black text-primary uppercase">Centaur Match</span>
+                                                </div>
+                                                <span className="text-emerald-400 font-bold">Sinergia: {selectedRole.matchScore}%</span>
                                                 <span className="text-slate-600">|</span>
-                                                <span className="text-slate-400">Basado en BioStack DNA</span>
+                                                <span className="text-slate-400 italic text-xs">High Theory of Mind (ToM) Detected</span>
                                             </div>
                                         </div>
                                     </div>

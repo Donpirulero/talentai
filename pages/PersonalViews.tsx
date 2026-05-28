@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
     BrainCircuit, Search, Share2, Zap, BarChart3, Target, Binary, ShieldAlert,
     TrendingUp, Sparkles, Award, Mic, StopCircle, RefreshCw, Flame, Edit3,
@@ -252,19 +252,23 @@ export const CognitiveRestructuring: React.FC = () => {
                 const base64Audio = (reader.result as string).split(',')[1];
 
                 try {
-                    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-                    const response = await ai.models.generateContent({
-                        model: 'gemini-3-flash-preview',
-                        contents: {
+                    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+                    const ai = new GoogleGenerativeAI(apiKey);
+                    const genModel = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+                    const result = await genModel.generateContent({
+                        contents: [{
+                            role: 'user',
                             parts: [
                                 { inlineData: { mimeType: 'audio/webm', data: base64Audio } },
                                 { text: "Transcribe this audio exactly as spoken." }
                             ]
-                        }
+                        }]
                     });
+                    const response = await result.response;
+                    const transcription = response.text();
 
-                    if (response.text) {
-                        setJournalEntry(prev => (prev ? prev + " " : "") + response.text);
+                    if (transcription) {
+                        setJournalEntry(prev => (prev ? prev + " " : "") + transcription);
                     }
                 } catch (apiError) {
                     console.error("API Error", apiError);
@@ -485,7 +489,7 @@ export const LearningPath: React.FC = () => {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-            // Check Backend API using env var or default to localhost
+            // Check Backend API using env var or default to 8001
             const apiUrl = import.meta.env.VITE_DEEPTUTOR_API_URL || 'http://localhost:8001/api/v1';
             await fetch(`${apiUrl}/knowledge/health`, { mode: 'no-cors', signal: controller.signal });
             clearTimeout(timeoutId);
@@ -576,7 +580,7 @@ export const LearningPath: React.FC = () => {
                         </div>
                     ) : (
                         <iframe
-                            src={`${import.meta.env.VITE_DEEPTUTOR_URL || 'http://localhost:3782'}/guide`}
+                            src={`${import.meta.env.VITE_DEEPTUTOR_URL || 'http://localhost:8001'}/guides`} // Pointing to backend guides or external service
                             className="w-full h-full border-none opacity-90 hover:opacity-100 transition-opacity"
                             title="DeepTutor Interface"
                         />

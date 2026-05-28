@@ -34,12 +34,21 @@ const SkillsRadar: React.FC<SkillsRadarProps> = ({ skills }) => {
             stroke="#1e293b"
           />
           <Radar
-            name="Nivel"
-            dataKey="score"
+            name="Individual (θ)"
+            dataKey="theta"
+            stroke="#94a3b8"
+            strokeWidth={1}
+            fill="#94a3b8"
+            fillOpacity={0.1}
+            strokeDasharray="4 4"
+          />
+          <Radar
+            name="Sinergia (κ)"
+            dataKey="kappa"
             stroke="#ec5b13"
             strokeWidth={3}
             fill="#ec5b13"
-            fillOpacity={0.25}
+            fillOpacity={0.3}
             animationBegin={0}
             animationDuration={1500}
           />
@@ -51,7 +60,7 @@ const SkillsRadar: React.FC<SkillsRadarProps> = ({ skills }) => {
               color: '#f8fafc',
               backdropFilter: 'blur(8px)'
             }}
-            itemStyle={{ color: '#ec5b13', fontWeight: 'bold' }}
+            itemStyle={{ fontWeight: 'bold' }}
             cursor={{ stroke: '#ec5b13', strokeWidth: 1 }}
           />
         </RadarChart>

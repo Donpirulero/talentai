@@ -115,6 +115,35 @@ const BioStackCatalog: React.FC = () => {
                                                 </p>
                                             </div>
                                         </div>
+
+                                        {/* Centaur Indicators Overlay */}
+                                        <div className="flex items-center gap-4 pt-4 mt-2 border-t border-white/5 bg-primary/5 -mx-8 px-8 py-3">
+                                            <div className="flex flex-col">
+                                                <span className="text-[7px] font-black text-slate-500 uppercase tracking-widest">Base Profile (θ)</span>
+                                                <div className="flex items-center gap-1">
+                                                    <div className="h-1.5 w-12 bg-slate-700 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-slate-400" style={{ width: '70%' }}></div>
+                                                    </div>
+                                                    <span className="text-[9px] font-bold text-slate-400">0.7</span>
+                                                </div>
+                                            </div>
+                                            <div className="w-px h-6 bg-white/10"></div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[7px] font-black text-primary uppercase tracking-widest">IA Boost (κ)</span>
+                                                <div className="flex items-center gap-1">
+                                                    <div className="h-1.5 w-12 bg-primary/20 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-primary animate-pulse" style={{ width: '92%' }}></div>
+                                                    </div>
+                                                    <span className="text-[9px] font-black text-primary">+22%</span>
+                                                </div>
+                                            </div>
+                                            <div className="ml-auto">
+                                                <div className="px-2 py-1 rounded bg-black/40 border border-primary/30 flex items-center gap-1">
+                                                    <Zap size={10} className="text-primary" />
+                                                    <span className="text-[8px] font-black text-white uppercase tracking-tighter">Centaur Optimized</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

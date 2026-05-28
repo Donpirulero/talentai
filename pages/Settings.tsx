@@ -4,6 +4,8 @@ import { User, CreditCard, Palette, Shield, Bot, Zap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { dbService } from '../services/db';
+import { supabase } from '../utils/supabase';
+import { Camera, Save, X as CloseIcon } from 'lucide-react';
 
 interface TabItem {
     id: string;
@@ -62,12 +64,26 @@ const Settings: React.FC = () => {
     }, [user]);
 
     const [profileData, setProfileData] = useState({
-        name: '',
+        name: user?.user_metadata?.full_name || user?.user_metadata?.name || '',
         email: user?.email || '',
         phone: '',
         company: '',
         position: '',
+        avatar_url: user?.user_metadata?.avatar_url || user?.user_metadata?.picture || ''
     });
+
+    const [uploading, setUploading] = useState(false);
+
+    useEffect(() => {
+        if (user) {
+            setProfileData(prev => ({
+                ...prev,
+                name: user?.user_metadata?.full_name || user?.user_metadata?.name || '',
+                email: user?.email || '',
+                avatar_url: user?.user_metadata?.avatar_url || user?.user_metadata?.picture || ''
+            }));
+        }
+    }, [user]);
 
     const [billingData, setBillingData] = useState({
         paymentMethod: '',
@@ -179,6 +195,80 @@ const Settings: React.FC = () => {
                                     </h2>
                                 </div>
 
+                                {/* Profile Picture Upload */}
+                                <div className="flex flex-col items-center md:items-start gap-6 mb-10 pb-8 border-b border-glass-border">
+                                    <div className="relative group/avatar">
+                                        <div
+                                            className="size-32 rounded-3xl bg-surface-dark border-4 border-white/5 overflow-hidden shadow-2xl relative"
+                                        >
+                                            {profileData.avatar_url ? (
+                                                <img
+                                                    src={profileData.avatar_url}
+                                                    alt="Profile"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-slate-700">
+                                                    <User size={64} />
+                                                </div>
+                                            )}
+                                            {uploading && (
+                                                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                                                    <div className="size-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <label className="absolute -bottom-2 -right-2 size-10 bg-primary text-white rounded-xl flex items-center justify-center cursor-pointer shadow-lg shadow-primary/30 hover:bg-primary-glow hover:scale-105 transition-all z-10 border-4 border-background-dark">
+                                            <Camera size={18} />
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={async (e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (!file || !user) return;
+
+                                                    try {
+                                                        setUploading(true);
+                                                        const fileExt = file.name.split('.').pop();
+                                                        const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+                                                        const filePath = `avatars/${fileName}`;
+
+                                                        const { error: uploadError } = await supabase.storage
+                                                            .from('avatars')
+                                                            .upload(filePath, file);
+
+                                                        if (uploadError) throw uploadError;
+
+                                                        const { data: { publicUrl } } = supabase.storage
+                                                            .from('avatars')
+                                                            .getPublicUrl(filePath);
+
+                                                        // Update user metadata
+                                                        const { error: updateError } = await supabase.auth.updateUser({
+                                                            data: { avatar_url: publicUrl }
+                                                        });
+
+                                                        if (updateError) throw updateError;
+
+                                                        setProfileData(prev => ({ ...prev, avatar_url: publicUrl }));
+                                                        alert(language === 'es' ? 'Imagen de perfil actualizada' : 'Profile picture updated');
+                                                    } catch (error: any) {
+                                                        console.error("Error uploading avatar:", error);
+                                                        alert(error.message || "Error uploading image");
+                                                    } finally {
+                                                        setUploading(false);
+                                                    }
+                                                }}
+                                            />
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white font-black text-lg">{profileData.name}</h3>
+                                        <p className="text-slate-500 text-sm font-bold">{profileData.email}</p>
+                                    </div>
+                                </div>
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     {[
                                         { label: t('settings.profile.name') || 'Name', value: profileData.name, key: 'name', type: 'text', placeholder: 'John Doe' },
@@ -216,7 +306,14 @@ const Settings: React.FC = () => {
 
                                 <div className="flex justify-end gap-4 pt-6 border-t border-glass-border">
                                     <button
-                                        onClick={() => setProfileData({ name: '', email: '', phone: '', company: '', position: '' })}
+                                        onClick={() => setProfileData({
+                                            name: user?.user_metadata?.full_name || user?.user_metadata?.name || '',
+                                            email: user?.email || '',
+                                            phone: '',
+                                            company: '',
+                                            position: '',
+                                            avatar_url: user?.user_metadata?.avatar_url || user?.user_metadata?.picture || ''
+                                        })}
                                         className="px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white hover:bg-white/5 transition-all"
                                     >
                                         {language === 'es' ? 'Cancelar' : 'Cancel'}

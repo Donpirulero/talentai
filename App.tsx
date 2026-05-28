@@ -3,7 +3,7 @@ import { HashRouter as Router, Routes, Route, Navigate, Outlet, Link, useLocatio
 import { Menu } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import { SupabaseStatus } from './components/SupabaseStatus';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -27,9 +27,26 @@ import ScoutSettings from './pages/ScoutSettings';
 import TalentProfiles from './pages/TalentProfiles';
 import TalentProfileDetail from './pages/TalentProfileDetail';
 
+import { startOnboarding } from './utils/onboarding';
+
 // Layout component for the authenticated application (Sidebar + Header + Content)
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user, loading } = useAuth();
+
+  React.useEffect(() => {
+    if (!loading && user) {
+      const hasCompletedTour = localStorage.getItem('talentai_onboarding_completed');
+      if (!hasCompletedTour) {
+        // Short delay to ensure components are rendered
+        const timer = setTimeout(() => {
+          startOnboarding(location.pathname);
+          localStorage.setItem('talentai_onboarding_completed', 'true');
+        }, 1500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [user, loading]);
   const location = useLocation();
   const isModulesPage = location.pathname === '/home' || location.pathname === '/modules';
 

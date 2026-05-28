@@ -14,9 +14,11 @@ export enum AnalysisStage {
 
 export interface Skill {
   name: string;
-  score: number; // 1-5
+  score: number; // 1-5 (Total seen)
+  theta?: number; // 0-5 (Individual Base Skill - θ)
+  kappa?: number; // 0-5 (Collaborative/Synergy Skill - κ)
   fullMark: number;
-  level?: 'Novato' | 'Competente' | 'Experto'; // Perizia level
+  level?: 'Novato' | 'Competente' | 'Experto';
 }
 
 export interface CompetencyCatalogo {

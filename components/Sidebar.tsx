@@ -2,7 +2,8 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
-import { X, LogOut, ChevronRight } from 'lucide-react';
+import { X, LogOut, ChevronRight, Compass } from 'lucide-react';
+import { startOnboarding } from '../utils/onboarding';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -13,7 +14,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
 
   const menuItems = [
     { type: 'header', label: "GESTIÓN DE TALENTO", id: 'h_talent' },
@@ -32,7 +33,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
     { type: 'header', label: "SISTEMA", id: 'h_sys' },
     { path: "/settings", icon: "settings", label: "Configuración", id: "settings" },
+    { type: 'action', icon: "explore", label: "Tour Guiado", id: "onboarding" },
   ];
+
+  const handleTourClick = () => {
+    console.log("Starting onboarding tour...");
+    startOnboarding(location.pathname);
+  };
 
   return (
     <>
@@ -80,6 +87,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               );
             }
 
+            if (item.type === 'action') return null;
+
             const isActive = location.pathname === item.path || (item.path !== '/home' && location.pathname.startsWith(item.path || ''));
             return (
               <Link
@@ -108,19 +117,51 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               </Link>
             );
           })}
+
+          {/* Action Buttons (like Tour) */}
+          {menuItems.filter(i => i.type === 'action').map((item) => (
+            <button
+              key={item.id}
+              onClick={() => {
+                if (item.id === 'onboarding') handleTourClick();
+                onClose();
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative text-slate-400 hover:text-white hover:bg-white/5"
+            >
+              <span className="material-symbols-outlined group-hover:text-primary transition-colors">
+                {item.icon}
+              </span>
+              <span className="text-sm tracking-wide font-medium opacity-80 group-hover:opacity-100">
+                {item.label}
+              </span>
+              <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                <ChevronRight size={14} className="text-slate-600" />
+              </div>
+            </button>
+          ))}
         </div>
 
         {/* User Profile & Logout Section */}
         <div className="p-6 border-t border-white/5 bg-black/40 backdrop-blur-md flex flex-col gap-4">
           <div className="flex items-center justify-between group/user">
-            <div className="flex items-center gap-4 cursor-pointer">
+            <div
+              className="flex items-center gap-4 cursor-pointer"
+              onClick={() => navigate('/settings')}
+            >
               <div className="relative">
-                <div className="bg-center bg-no-repeat bg-cover rounded-xl size-11 ring-2 ring-white/10 group-hover/user:ring-primary/50 transition-all duration-300 shadow-xl" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCcl8YAtzuDjT67svcZqIKZJpdliaRnCgCAtC3nOh9Ip8ys9lnFRZEGXZxqmtpK3-n1By1oUtY_tbX0i-qG3qiebcBQ3_E3b00D5aRok01a92CzN8a9EHqUzLba5f8lUN2G_Pfbs1iFi0I4S_FUFUeAqI2Rgg2l82-KmroX-rh5gO01PLIIVtpgNvFSAhAb5O_awuhFZHh9T6Ok2h9if5l5SxaTvgRqgWkQEAg-cI5RPDajIMPWsI8-i2R937i7Mv39bN0DKuRLBs27")' }}></div>
+                <div
+                  className="bg-center bg-no-repeat bg-cover rounded-xl size-11 ring-2 ring-white/10 group-hover/user:ring-primary/50 transition-all duration-300 shadow-xl"
+                  style={{ backgroundImage: `url("${user?.user_metadata?.avatar_url || user?.user_metadata?.picture || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100'}")` }}
+                ></div>
                 <div className="absolute -bottom-1 -right-1 size-4 bg-emerald-500 rounded-full border-2 border-[#0B101B] shadow-lg shadow-emerald-500/20"></div>
               </div>
               <div className="flex flex-col overflow-hidden">
-                <p className="text-white text-sm font-black truncate leading-tight tracking-tight">Alex Morgan</p>
-                <p className="text-slate-500 text-[10px] uppercase font-black tracking-widest truncate opacity-80">CHRO</p>
+                <p className="text-white text-sm font-black truncate leading-tight tracking-tight">
+                  {user?.user_metadata?.full_name || user?.user_metadata?.name || 'Usuario'}
+                </p>
+                <p className="text-slate-500 text-[10px] uppercase font-black tracking-widest truncate opacity-80">
+                  {user?.email ? 'Colaborador' : 'Invitado'}
+                </p>
               </div>
             </div>
             <button
